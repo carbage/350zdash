@@ -1,5 +1,4 @@
 import React, { useEffect, useState } from "react";
-import ReactSpeedometer from "react-d3-speedometer";
 import { ThemeProvider, createTheme, styled } from "@mui/material/styles";
 import CssBaseline from "@mui/material/CssBaseline";
 import Grid from "@mui/material/Grid";
