@@ -8,7 +8,6 @@ function  App() {
 
   ws.onmessage = event => {
     const json = JSON.parse(event.data);
-    console.log("Received:", json)
     try {
       if ((json.event = "data")) {
         setData(json)

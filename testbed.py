@@ -30,8 +30,9 @@ async def handler(websocket):
                 else:
                     if connection.supports(command):
                         data[item] = connection.query(command).value
-                        
-            print("Sending: ", data)
+
+            if debug:
+                print("Sending: ", data)
             await websocket.send(json.dumps(data))
         except websockets.ConnectionClosedOK:
             break
