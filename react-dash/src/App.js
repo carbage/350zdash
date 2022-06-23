@@ -1,4 +1,5 @@
 import React, { useState } from "react";
+import ReactSpeedometer from "react-d3-speedometer"
 
 function  App() {
 
@@ -17,7 +18,7 @@ function  App() {
     }
   };
 
-  return <div>{data.rpm}</div>;
+  return <ReactSpeedometer value={data.rpm} maxValue={8000} startColor={"#3291a8"} endColor={"#ff0000"}/>;
 }
 
 export default App;

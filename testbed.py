@@ -26,7 +26,7 @@ async def handler(websocket):
             for item in logs:
                 command = logs[item]
                 if debug:
-                    data[item] = random() * 1000
+                    data[item] = int(random() * 200) + 1000
                 else:
                     if connection.supports(command):
                         data[item] = connection.query(command).value
