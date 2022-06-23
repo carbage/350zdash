@@ -1,28 +1,48 @@
+from random import random
 import time
 import json
 import obd
 import asyncio
 import websockets
 
+debug = True
+
+logs = {
+    'dtc': obd.commands.GET_DTC,
+    'rpm': obd.commands.RPM,
+    'speed': obd.commands.SPEED
+}
+
 def init():
-    obd.logger.removeHandler(obd.console_handler)
+    #obd.logger.removeHandler(obd.console_handler)
     ports = obd.scan_serial()
     return obd.OBD(portstr=ports[0], protocol="4", baudrate=38400, fast=False)
  
-async def handler(websocket, path):
+async def handler(websocket):
+    print("Received incoming connection fron frontend...")
     while True:
-        rpm = connection.query(obd.commands.RPM).value
-        speed = connection.query(obd.commands.SPEED).value
+        try:
+            data = {}
+            for item in logs:
+                command = logs[item]
+                if debug:
+                    data[item] = random() * 1000
+                else:
+                    if connection.supports(command):
+                        data[item] = connection.query(command).value
+                        
+            print("Sending: ", data)
+            await websocket.send(json.dumps(data))
+        except websockets.ConnectionClosedOK:
+            break
 
-        data = {
-        'rpm': rpm,
-        'speed': speed
-        }
-        await websocket.send(json.dumps(data))
-        time.sleep(3)
+async def main():
+    async with websockets.serve(handler, "", 8000):
+        await asyncio.Future()  # run forever
+    
+if not debug:
+    print("Connecting to ECU...")
+    connection = init()
 
-connection = init()
-
-start_server = websockets.serve(handler, "localhost", 8000)
-asyncio.get_event_loop().run_until_complete(start_server)
-asyncio.get_event_loop().run_forever()
+print("Starting WebSocket Server...")
+asyncio.run(main())
