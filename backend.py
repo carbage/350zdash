@@ -30,8 +30,7 @@ def init():
     if debug:
         print(ports)
     if len(ports) > 0:
-        conn = obd.Async(protocol="4",
-                         baudrate=38400, fast=True)
+        conn = obd.Async(protocol="4", fast=True)
         for pid in pids:
             cmd = pids[pid][0]
             conn.watch(cmd)
