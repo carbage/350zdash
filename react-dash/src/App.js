@@ -63,11 +63,11 @@ function App() {
   const redline = 6800;
 
   const [data, setData] = useState({
-    rpm: 7000,
-    speed: 50,
-    fuel: 75,
-    temp: 80,
-    dtc: ["na"],
+    rpm: 0,
+    speed: 0,
+    fuel: 0,
+    temp: 0,
+    dtc: ["placeholder"],
   });
 
   useEffect(() => {
@@ -135,6 +135,9 @@ function App() {
           </Box>
             <Typography variant="h1" align="center">
               {data.speed} MPH
+            </Typography>
+            <Typography variant="h2" align="center" color="red">
+              {data.dtc ? "CHECK ENGINE": null}
             </Typography>
         </Grid>
       </Grid>
