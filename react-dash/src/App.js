@@ -3,34 +3,20 @@ import { ThemeProvider, createTheme, styled } from "@mui/material/styles";
 import CssBaseline from "@mui/material/CssBaseline";
 import Grid from "@mui/material/Grid";
 import Stack from "@mui/material/Stack";
+import Box from "@mui/material/Box";
 import Divider from "@mui/material/Divider";
 import Typography from "@mui/material/Typography";
 
 import LocalGasStationIcon from "@mui/icons-material/LocalGasStation";
 import ThermostatIcon from "@mui/icons-material/Thermostat";
 
-import LinearProgress, {
-  linearProgressClasses,
-} from "@mui/material/LinearProgress";
+import { CircularProgress } from "@mui/material";
 
 const darkTheme = createTheme({
   palette: {
     mode: "dark",
   },
 });
-
-const BorderLinearProgress = styled(LinearProgress)(({ theme }) => ({
-  height: 20,
-  borderRadius: 5,
-  [`&.${linearProgressClasses.colorPrimary}`]: {
-    backgroundColor:
-      theme.palette.grey[theme.palette.mode === "light" ? 200 : 800],
-  },
-  [`& .${linearProgressClasses.bar}`]: {
-    borderRadius: 5,
-    backgroundColor: theme.palette.mode === "light" ? "#1a90ff" : "#308fe8",
-  },
-}));
 
 function App() {
   const [data, setData] = useState({
@@ -64,29 +50,24 @@ function App() {
     <ThemeProvider theme={darkTheme}>
       <CssBaseline enableColorScheme />
       <Grid container spacing={3} alignItems="center" justify="center">
-        <Grid item xs={12}>
-          Dashboard
-        </Grid>
 
-        <Grid item xs={2}>
+        <Grid item xs={3}>
           <Typography variant="h1" component="h1" align="right">
             {data.rpm} RPM
           </Typography>
         </Grid>
 
-        <Grid item xs={4}>
+        <Grid item xs={1}></Grid>
+
+        <Grid item xs={3}>
           <Typography variant="h1" component="h1" align="right">
             {data.speed} MPH
           </Typography>
         </Grid>
 
-        <Grid item xs={6}>
-          <Typography variant="h4" component="h1" align="right">
-            DTC
-          </Typography>
-        </Grid>
+        <Grid item xs={3}></Grid>
 
-        <Grid item xs={12}>
+        <Grid item xs={2}>
           <Stack
             direction="row"
             divider={<Divider orientation="vertical" flexItem />}
@@ -94,12 +75,9 @@ function App() {
           >
             <ThermostatIcon />
             <Grid xs item>
-              <BorderLinearProgress variant="determinate" value={data.temp} />
+              <CircularProgress variant="determinate" value={data.temp} />
             </Grid>
           </Stack>
-        </Grid>
-
-        <Grid item xs={12}>
           <Stack
             direction="row"
             divider={<Divider orientation="vertical" flexItem />}
@@ -107,10 +85,14 @@ function App() {
           >
             <LocalGasStationIcon />
             <Grid xs item>
-              <BorderLinearProgress variant="determinate" value={data.fuel} />
+              <CircularProgress variant="determinate" value={data.fuel} />
             </Grid>
           </Stack>
         </Grid>
+
+        <Grid item xs={12}></Grid>
+
+        <Grid item xs={12}></Grid>
       </Grid>
     </ThemeProvider>
   );
