@@ -8,8 +8,8 @@ import websockets
 
 from obd import Unit
 
-debug = True
-simulate = True
+debug = False
+simulate = False
 
 connection = None
 
@@ -24,18 +24,19 @@ pids = {
 def init():
     if not debug:
         obd.logger.removeHandler(obd.console_handler)
+    else:
+        obd.logger.setLevel(obd.logging.DEBUG)
     ports = obd.scan_serial()
     if debug:
         print(ports)
     if len(ports) > 0:
         conn = obd.Async(protocol="4",
-                         baudrate=38400, fast=False)
-        if conn.is_connected:
-            for pid in pids:
-                cmd = pid[0]
-                conn.watch(cmd)
-            conn.start()
-            return conn
+                         baudrate=38400, fast=True)
+        for pid in pids:
+            cmd = pids[pid][0]
+            conn.watch(cmd)
+        conn.start()
+        return conn
     else:
         print("No OBD device found!")
     exit()
