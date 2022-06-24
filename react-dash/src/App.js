@@ -9,7 +9,7 @@ import Typography from "@mui/material/Typography";
 import LocalGasStationIcon from "@mui/icons-material/LocalGasStation";
 import ThermostatIcon from "@mui/icons-material/Thermostat";
 
-import { CircularProgress, LinearProgress } from "@mui/material";
+import { CircularProgress, circularProgressClasses, LinearProgress } from "@mui/material";
 
 const darkTheme = createTheme({
   palette: {
@@ -41,8 +41,31 @@ LinearProgressWithLabel.propTypes = {
 
 function CircularProgressWithContent(props) {
   return (
-    <Box position="relative" display="inline-flex">
-      <CircularProgress {...props} />
+    <Box sx={{ position: 'relative' }}
+    position="absolute"
+    display="flex"
+    alignItems="center"
+    justifyContent="center">
+      <CircularProgress
+        variant="determinate"
+        size={40}
+        thickness={4}
+        {...props}
+        style={{
+          color:"#4a4a4a",
+        }}
+        value={100}
+      />
+      <CircularProgress
+        variant="determinate"
+        disableShrink
+        sx={{
+          position: 'absolute',
+        }}
+        size={40}
+        thickness={4}
+        {...props}
+      />
       <Box
         top={0}
         left={0}
@@ -93,7 +116,7 @@ function App() {
     <ThemeProvider theme={darkTheme}>
       <CssBaseline enableColorScheme />
       <Grid container spacing={2} sx={{ p: 10 }} alignItems="center" justify="center">
-        <Grid item xs={2}>
+        <Grid item xs={2} spacing={2}>
           <CircularProgressWithContent
             content={<ThermostatIcon fontSize="large" />}
             variant="determinate"
@@ -104,7 +127,7 @@ function App() {
                 data.temp > 180 ? (data.temp > 200 ? "red" : "green") : "blue",
             }}
           />
-
+          <br />
           <CircularProgressWithContent
             content={<LocalGasStationIcon fontSize="large" />}
             variant="determinate"

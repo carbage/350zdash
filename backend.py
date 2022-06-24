@@ -9,7 +9,7 @@ import websockets
 from obd import Unit
 
 debug = True
-simulate = False
+simulate = True
 
 connection = None
 
