@@ -47,13 +47,9 @@ async def handler(websocket):
                     data[item] = int((percent/100) * logs[item][2])
                 else:
                     if connection.supports(command):
-                        res = connection.query(command).value
-                        if isinstance(res, Unit.Quantity):
-                            data[item] = res.magnitude
-                        else:
-                            data[item] = str(res)
+                        data[item] = sanitize(connection.query(command).value)
                     else:
-                        data[item] = str(0)
+                        data[item] = 0
 
             if debug:
                 print("Sending: ", data)
@@ -63,6 +59,14 @@ async def handler(websocket):
         except websockets.ConnectionClosedOK:
             break
 
+def sanitize(x):
+    if isinstance(res, Unit.Quantity):
+        return res.magnitude
+    try:
+        res = json.dumps(x)
+        return res
+    except (TypeError, OverflowError):
+        return str(x)
 
 async def main():
     async with websockets.serve(handler, "", 8000):
