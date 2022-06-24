@@ -7,21 +7,30 @@ import websockets
 
 from obd import Unit
 
-debug = False
+debug = True
+simulate = True
 
 logs = {
     'dtc': [obd.commands.GET_DTC, 0, 0],
     'rpm': [obd.commands.RPM, 0, 8000],
     'speed': [obd.commands.SPEED, 0, 180],
-    'temp': [obd.commands.COOLANT_TEMP, 0, 140],
-    'fuel': [obd.commands.COOLANT_TEMP, 0, 100]
+    'temp': [obd.commands.COOLANT_TEMP, 0, 280],
+    'fuel': [obd.commands.FUEL_LEVEL, 0, 100]
 }
+
 
 def init():
     obd.logger.removeHandler(obd.console_handler)
     ports = obd.scan_serial()
-    return obd.OBD(portstr=ports[0], protocol="4", baudrate=38400, fast=False)
- 
+    conn = obd.Async(portstr=ports[0], protocol="4",
+                     baudrate=38400, fast=False)
+    for log in logs:
+        cmd = log[0]
+        conn.watch(cmd)
+    conn.start()
+    return conn
+
+
 async def handler(websocket):
     print("Received incoming connection fron frontend...")
     percent = 0
@@ -30,14 +39,13 @@ async def handler(websocket):
             if percent >= 100:
                 percent = 0
             else:
-                percent += 5
+                percent += 1
             data = {}
             for item in logs:
                 command = logs[item][0]
-                if debug:
+                if simulate:
                     data[item] = int((percent/100) * logs[item][2])
                 else:
-                    # data[item] = str(connection.query(command).value)
                     if connection.supports(command):
                         res = connection.query(command).value
                         if isinstance(res, Unit.Quantity):
@@ -50,16 +58,17 @@ async def handler(websocket):
             if debug:
                 print("Sending: ", data)
             await websocket.send(json.dumps(data))
-            if debug:
-                await asyncio.sleep(0.25)
+            if simulate:
+                await asyncio.sleep(0.1)
         except websockets.ConnectionClosedOK:
             break
+
 
 async def main():
     async with websockets.serve(handler, "", 8000):
         await asyncio.Future()  # run forever
-    
-if not debug:
+
+if not simulate:
     print("Connecting to ECU...")
     connection = init()
 
